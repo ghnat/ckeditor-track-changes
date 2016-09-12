@@ -1941,15 +1941,26 @@
 				ctNode = nextDelNode;
 				ctNode.insertBefore(contentNode, ctNode.firstChild);
 			} 
-			else { // not in the neighborhood of a delete node
-				var changeId = this.getAdjacentChangeId(contentNode, moveLeft);
-				ctNode = this._createIceNode(DELETE_TYPE, null, changeId);
-				if (options.deleteNodesCollection) {
-					options.deleteNodesCollection.push(ctNode);
-				}
-				contentNode.parentNode.insertBefore(ctNode, contentNode);
-				ctNode.appendChild(contentNode);
-			}
+      else { // not in the neighborhood of a delete node
+        if (this._parentIsATag(contentNode.parentNode)) {
+          var nodeToRemove = $(contentNode.parentNode).parents('tag').parent().get(0);
+          range && range.selectNode(nodeToRemove.parentNode);
+          this._removeNode(nodeToRemove);
+          if (range) {
+            range.collapse();
+            range.refresh();
+            return true;
+          }
+        } else {
+          var changeId = this.getAdjacentChangeId(contentNode, moveLeft);
+          ctNode = this._createIceNode(DELETE_TYPE, null, changeId);
+          if (options.deleteNodesCollection) {
+            options.deleteNodesCollection.push(ctNode);
+          }
+          contentNode.parentNode.insertBefore(ctNode, contentNode);
+          ctNode.appendChild(contentNode);
+        }
+      }
 			if (range) {
 				if (ice.dom.isStubElement(contentNode)) {
 					range.selectNode(contentNode);
@@ -1972,7 +1983,15 @@
 			return true;
 	
 		},
-		
+
+    _parentIsATag: function(ctNode) {
+      var $parents = $(ctNode).parents('tag');
+      if ($parents.length) {
+        return true;
+      }
+      return false;
+    },
+
 		/**
 		 * @private
 		 * Adds delete tracking to a BR node
