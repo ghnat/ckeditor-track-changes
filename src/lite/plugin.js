@@ -1437,13 +1437,13 @@ Written by (David *)Frenkiel - https://github.com/imdfl
 			}
 			if (toInsert && toInsert.length) {
 				toInsert = cleanClipboard(toInsert);
-				var focused = this._editor.focusManager.hasFocus;
+				// var focused = this._editor.focusManager.hasFocus;
 				this._beforeInsert();
 				this._tracker.insert({nodes: toInsert});
 				this._afterInsert();
-				if (focused) {
-					this._editor.editable().focus();
-				}
+				// if (focused) {
+				// 	this._editor.editable().focus();
+				// }
 				evt.stop();
 //				this._onIceTextChanged();
 			}
